@@ -182,7 +182,17 @@ CollectionAPI._requestListener.prototype._getRequest = function(fromPutRequest) 
 
     try {
       // TODO: A better way to do this?
-      var collection_result = self._requestPath.collectionId !== undefined ? self._requestCollection.find(self._requestPath.collectionId) : self._requestCollection.find();
+      var collection_result;
+      if(self._requestPath.collectionId !== undefined) {
+        var filterData = self._requestPath.collectionId;
+        if(filterData[0] == '{') {
+          collection_result = self._requestCollection.find(JSON.parse(filterData))
+        } else {
+         collection_result = self._requestCollection.find(filterData)
+        }
+      } else {
+       collection_result = self._requestCollection.find();
+      }
 
       var records = [];
       collection_result.forEach(function(record) {
